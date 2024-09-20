@@ -143,33 +143,33 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>com.microsoft.azure</groupId>-->
-<!--                <artifactId>azure-spring-apps-maven-plugin</artifactId>-->
-<!--                <version>1.19.0</version>-->
-<!--                <configuration>-->
-<!--                    <subscriptionId>20554e82-cce0-429e-a70f-db1f3109f557</subscriptionId>-->
-<!--                    <resourceGroup>pod-booking</resourceGroup>-->
-<!--                    <clusterName>pod-booking</clusterName>-->
-<!--                    <sku>Standard</sku>-->
-<!--                    <appName>application</appName>-->
-<!--                    <isPublic>true</isPublic>-->
-<!--                    <deployment>-->
-<!--                        <cpu>4.0</cpu>-->
-<!--                        <memoryInGB>8.0</memoryInGB>-->
-<!--                        <instanceCount>1</instanceCount>-->
-<!--                        <runtimeVersion>Java_17</runtimeVersion>-->
-<!--                        <resources>-->
-<!--                            <resource>-->
-<!--                                <directory>${project.basedir}/target</directory>-->
-<!--                                <includes>-->
-<!--                                    <include>*.jar</include>-->
-<!--                                </includes>-->
-<!--                            </resource>-->
-<!--                        </resources>-->
-<!--                    </deployment>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>com.microsoft.azure</groupId>-->
+            <!--                <artifactId>azure-spring-apps-maven-plugin</artifactId>-->
+            <!--                <version>1.19.0</version>-->
+            <!--                <configuration>-->
+            <!--                    <subscriptionId>20554e82-cce0-429e-a70f-db1f3109f557</subscriptionId>-->
+            <!--                    <resourceGroup>pod-booking</resourceGroup>-->
+            <!--                    <clusterName>pod-booking</clusterName>-->
+            <!--                    <sku>Standard</sku>-->
+            <!--                    <appName>application</appName>-->
+            <!--                    <isPublic>true</isPublic>-->
+            <!--                    <deployment>-->
+            <!--                        <cpu>4.0</cpu>-->
+            <!--                        <memoryInGB>8.0</memoryInGB>-->
+            <!--                        <instanceCount>1</instanceCount>-->
+            <!--                        <runtimeVersion>Java_17</runtimeVersion>-->
+            <!--                        <resources>-->
+            <!--                            <resource>-->
+            <!--                                <directory>${project.basedir}/target</directory>-->
+            <!--                                <includes>-->
+            <!--                                    <include>*.jar</include>-->
+            <!--                                </includes>-->
+            <!--                            </resource>-->
+            <!--                        </resources>-->
+            <!--                    </deployment>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
         </plugins>
         <pluginManagement>
             <plugins>
