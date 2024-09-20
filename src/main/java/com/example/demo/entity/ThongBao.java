@@ -49,4 +49,13 @@ public class ThongBao {
     @ManyToOne
     @JoinColumn(name = "id_user")
     private User user;
+
+//    @ManyToOne
+//    @JoinColumn(name = "id_pod_chi_tiet")
+//    private PodChiTiet podChiTiet;
+
+//    @ManyToOne
+//    @JoinColumn(name = "id_item_menu_chi_tiet")
+//    private ItemMenuChiTiet itemMenuChiTiet;
+
 }

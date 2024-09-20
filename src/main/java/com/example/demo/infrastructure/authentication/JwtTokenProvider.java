@@ -52,7 +52,7 @@ public class JwtTokenProvider {
 
     // get username from Jwt token
     public String getUsername(String token){
-        Claims claims = Jwts.parserBuilder()
+        Claims claims = Jwts.parser()
                 .setSigningKey(key())
                 .build()
                 .parseClaimsJws(token)
@@ -64,7 +64,7 @@ public class JwtTokenProvider {
     // validate Jwt token
     public boolean validateToken(String token){
         try{
-            Jwts.parserBuilder()
+            Jwts.parser()
                     .setSigningKey(key())
                     .build()
                     .parse(token);
@@ -82,7 +82,7 @@ public class JwtTokenProvider {
     // refresh  JWT token
     public boolean isTokenExpired(String accessToken){
         try {
-            Claims claims = Jwts.parserBuilder()
+            Claims claims = Jwts.parser()
                     .setSigningKey(key())
                     .build()
                     .parseClaimsJws(accessToken)
