@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.example.demo.entity.Role;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,5 +29,7 @@ public class RegisterRequest {
     @Column(name = "Phone")
     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Invalid phone")
     String Phone;
+
+    Role role;
 
 }

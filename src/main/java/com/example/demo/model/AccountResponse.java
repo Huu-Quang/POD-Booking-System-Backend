@@ -8,4 +8,5 @@ public class AccountResponse {
     String Username;
     String Email;
     String Phone;
+    String Token;
 }

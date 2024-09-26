@@ -36,6 +36,9 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    @Autowired
+    TokenService tokenService;
+
     public AccountResponse register(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
 
@@ -67,8 +70,11 @@ public class AuthenticationService implements UserDetailsService {
             ));
             // => account is already exist
             Account account = (Account) authentication.getPrincipal();
-            return modelMapper.map(account, AccountResponse.class);
+            AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
+            accountResponse.setToken(tokenService.generateToken(account));
+            return accountResponse;
         }catch (Exception e){
+            e.printStackTrace();
             throw new EntityNotFoundException("Username or password invalid");
         }
 
