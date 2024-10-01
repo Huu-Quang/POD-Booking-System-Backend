@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,8 +9,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +25,9 @@ public class Account implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     long id;
+
+    @Enumerated(EnumType.STRING)
+    Role role;
 
     @NotBlank(message = "Username can not be blank!")
     @Column(name = "Username")
@@ -42,7 +48,11 @@ public class Account implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        if(this.role != null) authorities.add(new SimpleGrantedAuthority(this.role.toString()));
+
+        return authorities;
+
     }
     @Override
     public String getUsername(){
@@ -68,4 +78,8 @@ public class Account implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    @OneToMany(mappedBy = "account")
+    @JsonIgnore
+
+    List<User> users;
 }

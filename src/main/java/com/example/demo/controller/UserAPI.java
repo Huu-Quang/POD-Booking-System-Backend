@@ -2,10 +2,13 @@ package com.example.demo.controller;
 
 
 import com.example.demo.entity.User;
+import com.example.demo.model.UserRequest;
 import com.example.demo.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -14,6 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("api/user")
 @CrossOrigin("http://localhost:3000")
+@SecurityRequirement(name = "api")
+
 public class UserAPI {
 
     //cors
@@ -23,7 +28,8 @@ public class UserAPI {
     UserService userService;
 
     @PostMapping
-    public ResponseEntity createUser(@Valid @RequestBody User user) {
+    @PreAuthorize("hasRole(ADMIN)")
+    public ResponseEntity createUser(@Valid @RequestBody UserRequest user) {
         User newUser = userService.create(user);
         return ResponseEntity.ok(user);
     }

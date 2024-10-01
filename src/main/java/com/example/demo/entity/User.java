@@ -26,7 +26,7 @@ public class User {
     @JsonIgnore
     boolean isDeleted = false;
 
-    @NotBlank (message = "Name can not be blank!")
+
     @Column(name = "name")
     String name;
 
@@ -36,16 +36,16 @@ public class User {
 
 
 
-    @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})", message = "Phone is not valid!")
-    @NotBlank (message = "phone can not be blank!")
     @Column(name = "Phone")
     String phone;
 
 
-    @NotBlank (message = "email can not be blank!")
-    @Email(message = "Email should be valid")
+
     @Column(name = "Email")
     String email;
 
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    Account account;
 
 }

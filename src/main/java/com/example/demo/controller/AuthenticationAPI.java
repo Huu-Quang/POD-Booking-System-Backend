@@ -7,6 +7,7 @@ import com.example.demo.model.LoginRequest;
 import com.example.demo.model.RegisterRequest;
 import com.example.demo.repository.AccountRepository;
 import com.example.demo.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/account")
+@SecurityRequirement(name = "api")
 public class AuthenticationAPI {
 
     @Autowired

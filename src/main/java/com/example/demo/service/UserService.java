@@ -1,9 +1,13 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Account;
 import com.example.demo.entity.User;
+import com.example.demo.model.UserRequest;
 import com.example.demo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +19,26 @@ public class UserService {
     //Create
     @Autowired
     UserRepository userRepository;
-    public  User create(User user){
-        User newUser = userRepository.save(user);
-           return newUser;
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Autowired
+    AuthenticationService authenticationService;
+    public  User create(UserRequest userRequest){
+        try {
+            User user = modelMapper.map(userRequest, User.class);
+            // xac dinh account tao user
+            // luu lai account cua user hien tai
+            Account accountRequest = authenticationService.getCurrentAccount();
+            user.setAccount(accountRequest);
+            User newUser = userRepository.save(user);
+            return newUser;
+        } catch (Exception e){
+            throw new EntityNotFoundException("Duplicate phone");
+        }
+
+
     }
     //Read
     public List<User> getAllUser(){

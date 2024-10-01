@@ -5,6 +5,7 @@ import com.example.demo.entity.Account;
 import com.example.demo.exception.DuplicateEntity;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.model.AccountResponse;
+import com.example.demo.model.EmailDetail;
 import com.example.demo.model.LoginRequest;
 import com.example.demo.model.RegisterRequest;
 import com.example.demo.repository.AccountRepository;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +38,11 @@ public class AuthenticationService implements UserDetailsService {
     @Autowired
     AuthenticationManager authenticationManager;
 
+    @Autowired
+    TokenService tokenService;
+
+    @Autowired
+    EmailService emailService;
     public AccountResponse register(RegisterRequest registerRequest) {
         Account account = modelMapper.map(registerRequest, Account.class);
 
@@ -45,6 +52,13 @@ public class AuthenticationService implements UserDetailsService {
 
             account.setPassword(passwordEncoder.encode(originPassword));
            Account newAccount = accountRepository.save(account);
+
+           // send email ve cho user
+             EmailDetail emailDetail = new EmailDetail();
+             emailDetail.setReceiver(newAccount);
+             emailDetail.setSubject("Welcome to my website");
+             emailDetail.setLink("https://www.google.com");
+             emailService.sendEmail(emailDetail);
            return modelMapper.map(newAccount, AccountResponse.class);
         } catch(Exception e){
             if ( e.getMessage().contains(account.getUsername())){
@@ -67,8 +81,11 @@ public class AuthenticationService implements UserDetailsService {
             ));
             // => account is already exist
             Account account = (Account) authentication.getPrincipal();
-            return modelMapper.map(account, AccountResponse.class);
+            AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
+            accountResponse.setToken(tokenService.generateToken(account));
+            return accountResponse;
         }catch (Exception e){
+            e.printStackTrace();
             throw new EntityNotFoundException("Username or password invalid");
         }
 
@@ -103,6 +120,10 @@ public class AuthenticationService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return accountRepository.findAccountByUsername(username);
 
+    }
+    public Account getCurrentAccount(){
+        Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return account;
     }
 }
 
