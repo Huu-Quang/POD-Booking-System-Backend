@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,9 +17,18 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+
+
     String image;
+
+
+    @NotBlank(message = "Name is mandatory")
     String name;
+
+
     String description;
+
+
     String price;
 
     @OneToMany(mappedBy = "product")
