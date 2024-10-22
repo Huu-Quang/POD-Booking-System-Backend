@@ -12,9 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api/orders")
 @SecurityRequirement(name = "api")
 @CrossOrigin(origins = "*")
 public class OrderAPI {
@@ -34,9 +35,24 @@ public class OrderAPI {
 
     }
     @GetMapping
-    public ResponseEntity get(){
+    public ResponseEntity getAll(){
         Account account = authenticationService.getCurrentAccount();
         List<Orders> orders = orderRepository.findOrdersByCustomer(account);
         return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity get(@PathVariable UUID id){
+        Orders orders = orderRepository.findOrdersById(id);
+        return ResponseEntity.ok(orders);
+    }
+    @PutMapping("{id}")
+    public ResponseEntity update(@PathVariable UUID id, @RequestBody OrderRequest orderRequest) {
+        Orders orders = orderService.update(id, orderRequest);
+        return ResponseEntity.ok(orders);
+    }
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable UUID id){
+        orderService.delete(id);
     }
 }

@@ -88,5 +88,9 @@ public class Account implements UserDetails {
     @JsonIgnore
     List<Orders> orders;
 
+    @OneToMany(mappedBy = "account")
+    @JsonIgnore
+    List<Booking> bookings;
+
 
 }
