@@ -55,4 +55,9 @@ public class OrderAPI {
     public void delete(@PathVariable UUID id){
         orderService.delete(id);
     }
+    @PostMapping("/transaction")
+    public ResponseEntity createTransaction(@RequestParam UUID orderId) {
+        orderService.createTransaction(orderId);
+        return ResponseEntity.ok("success");
+    }
 }

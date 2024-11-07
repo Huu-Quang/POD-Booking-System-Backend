@@ -35,5 +35,10 @@ public class Product {
     @JsonIgnore
     List<OrderDetail> orderDetails;
 
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    @JsonIgnore
+    Account account;
+
 
 }

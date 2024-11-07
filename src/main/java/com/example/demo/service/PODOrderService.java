@@ -4,12 +4,13 @@ import com.example.demo.entity.*;
 import com.example.demo.entity.Enum.PaymentEnums;
 import com.example.demo.entity.Enum.TransactionsEnum;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.model.OrderDetailRequest;
 import com.example.demo.model.OrderRequest;
+import com.example.demo.model.PODOrderDetailRequest;
+import com.example.demo.model.PODOrderRequest;
 import com.example.demo.repository.AccountRepository;
-import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.PODOrderRepository;
+import com.example.demo.repository.PODRepository;
 import com.example.demo.repository.PaymentRepository;
-import com.example.demo.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,108 +25,106 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
-public class OrderService {
+public class PODOrderService {
 
     @Autowired
-    OrderRepository orderRepository;
-
-    @Autowired
-    AuthenticationService authenticationService;
-
-    @Autowired
-    ProductRepository productRepository;
+    PODOrderRepository podOrderRepository;
 
     @Autowired
     AccountRepository accountRepository;
 
     @Autowired
+    PODRepository podRepository;
+
+    @Autowired
+    AuthenticationService authenticationService;
+
+    @Autowired
     PaymentRepository paymentRepository;
 
-
-
-    public Orders create(OrderRequest orderRequest) {
+    public PODOrder create(PODOrderRequest podOrderRequest) {
 
         Account customer = authenticationService.getCurrentAccount();
 
-        Orders order = new Orders();
-        List<OrderDetail> orderDetails = new ArrayList<>();
+        PODOrder podOrder = new PODOrder();
+        List<PODOrderDetail> podOrderDetails = new ArrayList<>();
         float total = 0;
 
-        order.setCustomer(customer);
-        order.setDate(new Date());
+        podOrder.setCustomer(customer);
 
-        for (OrderDetailRequest orderDetailRequest : orderRequest.getDetail()) {
+        podOrder.setDate(new Date());
 
-            Product product = productRepository.findProductById(orderDetailRequest.getProductId());
+        for (PODOrderDetailRequest podOrderDetailRequest : podOrderRequest.getDetail()) {
 
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setQuantity(orderDetailRequest.getQuantity());
-            orderDetail.setPrice(Float.parseFloat(product.getPrice()));
-            orderDetail.setProduct(product);
-            orderDetail.setOrder(order);
+            POD pod = podRepository.findPODById(podOrderDetailRequest.getPodId());
 
+            PODOrderDetail podOrderDetail = new PODOrderDetail();
 
-            orderDetails.add(orderDetail);
+            podOrderDetail.setQuantity(podOrderDetailRequest.getQuantity());
+            podOrderDetail.setPrice(podOrderDetail.getPrice());
+            podOrderDetail.setPodOrder(podOrder);
 
-            total += Float.parseFloat(product.getPrice()) * orderDetailRequest.getQuantity();
+            podOrderDetail.setPod(pod);
 
+            podOrderDetails.add(podOrderDetail);
+
+            total += podOrderDetail.getPrice() * podOrderDetail.getQuantity();
         }
-        order.setOrderDetail(orderDetails);
-        order.setTotal(total);
+        podOrder.setPodOrderDetails(podOrderDetails);
+        podOrder.setTotal(total);
 
-        return orderRepository.save(order);
 
+        return podOrderRepository.save(podOrder);
     }
-    public List<Orders> getAll() {
+
+    public List<PODOrder> getAll() {
         Account customer = authenticationService.getCurrentAccount();
-        List<Orders> orders = orderRepository.findOrdersByCustomer(customer);
-        if (orders == null || orders.isEmpty()) {
+        List<PODOrder> podOrders = podOrderRepository.findPODOrderByCustomer(customer);
+        if (podOrders == null || podOrders.isEmpty()) {
             throw new EntityNotFoundException("No orders found for the current customer");
         }
-        return orders;
-    }
 
-    public Orders get(UUID id) {
-        Orders order = orderRepository.findOrdersById(id);
-        if (order == null) {
-            throw new EntityNotFoundException("Order not found");
-        }
-        return order;
+    return podOrders;
+}
+public PODOrder get (UUID id) {
+    PODOrder podOrder = podOrderRepository.findPODOrderById(id);
+    if (podOrder == null) {
+        throw new EntityNotFoundException("Order not found");
     }
-    public Orders update(UUID id, OrderRequest orderRequest) {
-        Orders order = orderRepository.findOrdersById(id);
-        List<OrderDetail> orderDetails = new ArrayList<>();
-        float total = 0;
-        for (OrderDetailRequest orderDetailRequest : orderRequest.getDetail()) {
-            Product product = productRepository.findProductById(orderDetailRequest.getProductId());
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setQuantity(orderDetailRequest.getQuantity());
-            orderDetail.setPrice(Float.parseFloat(product.getPrice()));
-            orderDetail.setProduct(product);
-            orderDetail.setOrder(order);
-            orderDetails.add(orderDetail);
-            total += Float.parseFloat(product.getPrice()) * orderDetailRequest.getQuantity();
-        }
-        order.setOrderDetail(orderDetails);
-        order.setTotal(total);
-        return orderRepository.save(order);
+    return podOrder;
+}
+public PODOrder update(UUID id, PODOrderRequest podOrderRequest) {
+    PODOrder podOrder = podOrderRepository.findPODOrderById(id);
+    List<PODOrderDetail> podOrderDetails = new ArrayList<>();
+    float total = 0;
+    for (PODOrderDetailRequest podOrderDetailRequest : podOrderRequest.getDetail()) {
+        POD pod = podRepository.findPODById(podOrderDetailRequest.getPodId());
+        PODOrderDetail podOrderDetail = new PODOrderDetail();
+        podOrderDetail.setPodOrder(podOrder);
+        podOrderDetail.setQuantity(podOrderDetailRequest.getQuantity());
+        podOrderDetail.setPrice(podOrderDetail.getPrice());
+        podOrderDetail.setPod(pod);
+        podOrderDetails.add(podOrderDetail);
+        total += podOrderDetail.getPrice() * podOrderDetail.getQuantity();
     }
-
-    public void delete(UUID id) {
-        Orders order = orderRepository.findOrdersById(id);
-        orderRepository.delete(order);
-    }
-
-    public String createUrl(OrderRequest orderRequest) throws  Exception {
+    podOrder.setPodOrderDetails(podOrderDetails);
+    podOrder.setTotal(total);
+    return podOrderRepository.save(podOrder);
+}
+public void delete(UUID id) {
+    PODOrder podOrder = podOrderRepository.findPODOrderById(id);
+    podOrderRepository.delete(podOrder);
+}
+    public String createUrl(PODOrderRequest PODOrderRequest) throws  Exception {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime createDate = LocalDateTime.now();
         String formattedCreateDate = createDate.format(formatter);
 
 
         // create order
-        Orders orders = create(orderRequest);
+        PODOrder podOrder = create(PODOrderRequest);
 
-        float money = orders.getTotal() * 100;
+        float money = podOrder.getTotal() * 100;
         String amount = String.valueOf((int) money);
 
 
@@ -137,7 +136,7 @@ public class OrderService {
         String tmnCode = "0I712H9B";
         String secretKey = "ZOPSQ8G5KQFVU2PDYNEA0VB05BQUVSZO";
         String vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        String returnUrl = "https://www.google.com.vn/?hl=vi" + orders.getId(); //frontend
+        String returnUrl = "https://www.google.com.vn/?hl=vi" + podOrder.getId(); //frontend
         String currCode = "VND";
 
         Map<String, String> vnpParams = new TreeMap<>();
@@ -146,8 +145,8 @@ public class OrderService {
         vnpParams.put("vnp_TmnCode", tmnCode);
         vnpParams.put("vnp_Locale", "vn");
         vnpParams.put("vnp_CurrCode", currCode);
-        vnpParams.put("vnp_TxnRef", orders.getId().toString());
-        vnpParams.put("vnp_OrderInfo", "Thanh toan cho ma GD: " + orders.getId());
+        vnpParams.put("vnp_TxnRef", podOrder.getId().toString());
+        vnpParams.put("vnp_OrderInfo", "Thanh toan cho ma GD: " + podOrder.getId());
         vnpParams.put("vnp_OrderType", "other");
         vnpParams.put("vnp_Amount",amount);
 
@@ -197,10 +196,10 @@ public class OrderService {
     public void createTransaction(UUID uuid) {
         // find order
 
-        Orders order = orderRepository.findById(uuid).orElseThrow(()->new EntityNotFoundException("Order not found"));
+        PODOrder podOrder = podOrderRepository.findById(uuid).orElseThrow(()->new EntityNotFoundException("Order not found"));
         // create payment
         Payment payment = new Payment();
-        payment.setOrders(order);
+        payment.setPodOrder(podOrder);
         payment.setCreateAt(new Date());
         payment.setPayment_method(PaymentEnums.BANKING);;
 
@@ -228,7 +227,7 @@ public class OrderService {
         transactions2.setPayment(payment);
         transactions2.setStatus(TransactionsEnum.SUCCESS);
         transactions2.setDescription("Member to Admin");
-        float newBalance = admin.getBalance() + order.getTotal() * 0.10f;
+        float newBalance = admin.getBalance() + podOrder.getTotal() * 0.10f;
         admin.setBalance(newBalance);
 
 
@@ -241,9 +240,9 @@ public class OrderService {
         transactions3.setStatus(TransactionsEnum.SUCCESS);
         transactions3.setDescription("Admin to Owner");
         transactions3.setFrom(admin);
-        Account owner = order.getOrderDetail().get(0).getProduct().getAccount();
+        Account owner = podOrder.getPodOrderDetails().get(0).getPod().getAccount();
         transactions3.setTo(owner);
-        float newOwnerBalance = owner.getBalance() + order.getTotal() * (1 - 0.10f);
+        float newOwnerBalance = owner.getBalance() + podOrder.getTotal() * (1 - 0.10f);
         owner.setBalance(newOwnerBalance);
         setTransactions.add(transactions3);
 
@@ -256,3 +255,6 @@ public class OrderService {
 
     }
 }
+
+
+

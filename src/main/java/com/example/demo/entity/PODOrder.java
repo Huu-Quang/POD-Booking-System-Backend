@@ -12,23 +12,38 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-
-public class Orders {
+public class PODOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+
     Date date;
 
     float total;
 
+
+    int quantity;
+
+
+    float price;
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
+    @JsonIgnore
     Account customer;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    List<OrderDetail> orderDetail;
+    @OneToMany(mappedBy = "podOrder", cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<PODOrderDetail> podOrderDetails;
 
-    @OneToOne(mappedBy = "orders")
+    @OneToOne(mappedBy = "podOrder")
     @JsonIgnore
     Payment payment;
+    @ManyToOne
+    @JoinColumn(name = "customer", nullable = false)
+    Account account;
+
+    @ManyToOne
+    @JoinColumn(name = "pod_id", nullable = false)
+    POD pod;
 }

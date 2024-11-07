@@ -5,30 +5,27 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-
-public class Orders {
+public class PODOrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    Date date;
-
+    int quantity;
+    float price;
     float total;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    Account customer;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    List<OrderDetail> orderDetail;
-
-    @OneToOne(mappedBy = "orders")
+    @JoinColumn(name = "pod_order_id")
     @JsonIgnore
-    Payment payment;
+    PODOrder podOrder;
+
+    @ManyToOne
+    @JoinColumn(name = "pod_id")
+    @JsonIgnore
+    POD pod;
+
 }

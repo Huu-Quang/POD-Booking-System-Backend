@@ -26,6 +26,8 @@ public class Account implements UserDetails {
     @Column(name = "Id")
     long id;
 
+    float balance = 0;
+
     @Enumerated(EnumType.STRING)
     Role role;
 
@@ -88,9 +90,37 @@ public class Account implements UserDetails {
     @JsonIgnore
     List<Orders> orders;
 
+
+    @OneToMany(mappedBy = "from")
+    @JsonIgnore
+    List<Transactions> transactionsFrom;
+
+    @OneToMany(mappedBy = "to")
+    @JsonIgnore
+    List<Transactions> transactionsTo;
+
     @OneToMany(mappedBy = "account")
     @JsonIgnore
-    List<Booking> bookings;
+    List<Product> products;
+
+//    @OneToMany(mappedBy = "member")
+//    @JsonIgnore
+//    List<Feedback> member_feedbacks;
+//
+//    @OneToMany(mappedBy = "shop")
+//    @JsonIgnore
+//    List<Feedback> shop_feedbacks;
+
+    @ManyToOne
+    @JoinColumn(name = "pod_id")
+    @JsonIgnore
+    POD pod;
+
+    @OneToMany(mappedBy = "account")
+    @JsonIgnore
+    List<PODOrder> podOrders;
+
+
 
 
 }
