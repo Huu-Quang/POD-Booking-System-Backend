@@ -1,7 +1,7 @@
 package com.example.demo.entity.Enum;
 
 public enum Role {
-    CUSTOMER,
+    USER,
     ADMIN,
-    OWNER
+    BANNED
 }

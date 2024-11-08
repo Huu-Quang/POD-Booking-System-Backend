@@ -2,10 +2,11 @@ package com.example.demo.service;
 
 import com.example.demo.entity.*;
 import com.example.demo.entity.Enum.PaymentEnums;
+import com.example.demo.entity.Enum.Role;
 import com.example.demo.entity.Enum.TransactionsEnum;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.model.OrderDetailRequest;
-import com.example.demo.model.OrderRequest;
+import com.example.demo.model.Request.OrderDetailRequest;
+import com.example.demo.model.Request.OrderRequest;
 import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.PaymentRepository;
@@ -85,14 +86,14 @@ public class OrderService {
         return orders;
     }
 
-    public Orders get(UUID id) {
+    public Orders get(Long id) {
         Orders order = orderRepository.findOrdersById(id);
         if (order == null) {
             throw new EntityNotFoundException("Order not found");
         }
         return order;
     }
-    public Orders update(UUID id, OrderRequest orderRequest) {
+    public Orders update(Long id, OrderRequest orderRequest) {
         Orders order = orderRepository.findOrdersById(id);
         List<OrderDetail> orderDetails = new ArrayList<>();
         float total = 0;
@@ -111,7 +112,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public void delete(UUID id) {
+    public void delete(Long id) {
         Orders order = orderRepository.findOrdersById(id);
         orderRepository.delete(order);
     }
@@ -194,7 +195,7 @@ public class OrderService {
         return result.toString();
     }
 
-    public void createTransaction(UUID uuid) {
+    public void createTransaction(Long uuid) {
         // find order
 
         Orders order = orderRepository.findById(uuid).orElseThrow(()->new EntityNotFoundException("Order not found"));
@@ -211,23 +212,23 @@ public class OrderService {
         // create transaction
         Transactions transactions1 = new Transactions();
         //VNPay -> Member
-        Account member = authenticationService.getCurrentAccount();
+        Account user = authenticationService.getCurrentAccount();
         transactions1.setFrom(null);
-        transactions1.setTo(member);
+        transactions1.setTo(user);
         transactions1.setPayment(payment);
         transactions1.setStatus(TransactionsEnum.SUCCESS);
-        transactions1.setDescription("VNPay to Member");
+        transactions1.setDescription("VNPay to User");
 
         setTransactions.add(transactions1);
 
         Transactions transactions2 = new Transactions();
         //VNPay -> ADMIN
         Account admin = accountRepository.findAccountByRole(Role.ADMIN);
-        transactions2.setFrom(member);
+        transactions2.setFrom(user);
         transactions2.setTo(admin);
         transactions2.setPayment(payment);
         transactions2.setStatus(TransactionsEnum.SUCCESS);
-        transactions2.setDescription("Member to Admin");
+        transactions2.setDescription("User to Admin");
         float newBalance = admin.getBalance() + order.getTotal() * 0.10f;
         admin.setBalance(newBalance);
 
@@ -235,21 +236,9 @@ public class OrderService {
         setTransactions.add(transactions2);
 
 
-        //ADMIN -> OWNER
-        Transactions transactions3 = new Transactions();
-        transactions3.setPayment(payment);
-        transactions3.setStatus(TransactionsEnum.SUCCESS);
-        transactions3.setDescription("Admin to Owner");
-        transactions3.setFrom(admin);
-        Account owner = order.getOrderDetail().get(0).getProduct().getAccount();
-        transactions3.setTo(owner);
-        float newOwnerBalance = owner.getBalance() + order.getTotal() * (1 - 0.10f);
-        owner.setBalance(newOwnerBalance);
-        setTransactions.add(transactions3);
 
 
         accountRepository.save(admin);
-        accountRepository.save(owner);
         payment.setTransactions(setTransactions);
         paymentRepository.save(payment);
 

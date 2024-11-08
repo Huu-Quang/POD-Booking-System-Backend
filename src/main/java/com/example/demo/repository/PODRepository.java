@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface PODRepository extends JpaRepository<POD, UUID> {
+public interface PODRepository extends JpaRepository<POD, Long> {
 
-    POD findPODById(UUID id);
+    POD findPODById(Long id);
 }

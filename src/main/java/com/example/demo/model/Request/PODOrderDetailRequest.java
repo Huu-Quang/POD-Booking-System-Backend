@@ -1,11 +1,9 @@
-package com.example.demo.model;
+package com.example.demo.model.Request;
 
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
 public class PODOrderDetailRequest {
-  UUID podId;
+  Long podId;
   int quantity;
 }

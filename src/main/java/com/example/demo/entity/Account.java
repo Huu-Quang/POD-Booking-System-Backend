@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -35,6 +36,7 @@ public class Account implements UserDetails {
     @Column(name = "Username")
     String username;
 
+    String name;
 
     @Size(min = 6, message = "Password must be at least 6 characters")
     @Column(name = "Password")
@@ -103,13 +105,15 @@ public class Account implements UserDetails {
     @JsonIgnore
     List<Product> products;
 
-//    @OneToMany(mappedBy = "member")
-//    @JsonIgnore
-//    List<Feedback> member_feedbacks;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<Feedback> user_feedbacks;
 //
 //    @OneToMany(mappedBy = "shop")
 //    @JsonIgnore
 //    List<Feedback> shop_feedbacks;
+
+
 
     @ManyToOne
     @JoinColumn(name = "pod_id")
@@ -118,7 +122,8 @@ public class Account implements UserDetails {
 
     @OneToMany(mappedBy = "account")
     @JsonIgnore
-    List<PODOrder> podOrders;
+    List<CoffeeShop> coffeeShops;
+
 
 
 

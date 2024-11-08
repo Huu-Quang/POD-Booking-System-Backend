@@ -4,10 +4,11 @@ import com.example.demo.entity.Product;
 import com.example.demo.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -20,14 +21,15 @@ public class ProductService {
     }
 
     public List<Product> getAll() {
-        return productRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        return products;
     }
 
-    public Product getProductById(UUID id) {
+    public Product getProductById(Long id) {
         return productRepository.findProductById(id);
     }
 
-    public Product update(UUID id, Product product) {
+    public Product update(Long id, Product product) {
 
         Product updateProduct = productRepository.findProductById(id);
         updateProduct.setName(product.getName());
@@ -39,7 +41,7 @@ public class ProductService {
 
     }
 
-    public Product delete(UUID id) {
+    public Product delete(Long id) {
 
 
         Product product = productRepository.findProductById(id);

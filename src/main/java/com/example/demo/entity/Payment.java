@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.example.demo.entity.Enum.PaymentEnums;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,16 +24,17 @@ public class Payment {
 
     @OneToOne
     @JoinColumn(name = "order_id")
+            @JsonIgnore
     Orders orders;
 
-    @OneToOne
-    @JoinColumn(name = "pod_order_id")
-    PODOrder podOrder;
+
 
     @OneToMany(mappedBy = "payment",cascade = CascadeType.ALL)
+            @JsonIgnore
     Set<Transactions> transactions;
 
     @ManyToOne
     @JoinColumn(name = "pod_id")
+            @JsonIgnore
     POD pod;
 }

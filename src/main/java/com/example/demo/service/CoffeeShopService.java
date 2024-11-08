@@ -18,6 +18,12 @@ public class CoffeeShopService {
     public List<CoffeeShop> findCoffeeShopsByAddress(String address) {
         return coffeeShopRepository.findByAddress(address);
     }
+    public List<CoffeeShop> findCoffeeShopsByName(String name) {
+        return coffeeShopRepository.findByNameContainingIgnoreCase(name);
+    }
+    public List<CoffeeShop> findAll() {
+        return coffeeShopRepository.findAll();
+    }
 
     public CoffeeShop createCoffeeShop(CoffeeShop coffeeShop) {
         return coffeeShopRepository.save(coffeeShop);
