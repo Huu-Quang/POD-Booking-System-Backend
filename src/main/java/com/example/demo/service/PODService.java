@@ -5,16 +5,19 @@ import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.repository.PODRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class PODService {
 
     @Autowired
     private PODRepository podRepository;
-
+//
+//    @Autowired
+//    private FirebaseStorageService firebaseStorageService;
     public List<POD> getAllPODs() {
         return podRepository.findAll();
     }
@@ -27,11 +30,15 @@ public class PODService {
         return podRepository.save(pod);
     }
 
-    public POD updatePOD(Long id, POD podDetails) {
+    public POD updatePOD(Long id, MultipartFile file, POD podDetails) throws IOException {
         POD pod = podRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("POD not found"));
         pod.setImage(podDetails.getImage());
         pod.setDescription(podDetails.getDescription());
         pod.setPrice(podDetails.getPrice());
+//        if (file != null && !file.isEmpty()) {
+//            String url = firebaseStorageService.uploadFile(file);
+//            pod.setImage(url);
+//        }
         return podRepository.save(pod);
     }
 
