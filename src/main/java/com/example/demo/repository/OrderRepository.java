@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Orders, UUID> {
+public interface OrderRepository extends JpaRepository<Orders, Long> {
    List<Orders> findOrdersByCustomer(Account customer);
-    Orders findOrdersById(UUID id);
+    Orders findOrdersById(Long id);
 }

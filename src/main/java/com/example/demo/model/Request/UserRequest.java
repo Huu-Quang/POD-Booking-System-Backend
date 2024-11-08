@@ -1,19 +1,20 @@
-package com.example.demo.model;
+package com.example.demo.model.Request;
 
+import com.example.demo.entity.Enum.Role;
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
 public class UserRequest {
-    @NotBlank(message = "Name can not be blank!")
-    String name;
+    String username;
 
 
-    @Min(value = 0, message = "Age can not be less than 0!")
-    int age;
+    String password;
+
+    Role role;
+
+
 
 
 

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.context.annotation.Role;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,8 +16,8 @@ import java.util.UUID;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
 
     String image;
@@ -30,6 +31,8 @@ public class Product {
 
 
     String price;
+
+
 
     @OneToMany(mappedBy = "product")
     @JsonIgnore

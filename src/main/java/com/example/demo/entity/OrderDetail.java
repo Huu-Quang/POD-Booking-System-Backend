@@ -14,8 +14,8 @@ import java.util.UUID;
 public class OrderDetail {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     int quantity;
     float price;

@@ -1,6 +1,5 @@
-package com.example.demo.model;
+package com.example.demo.model.Request;
 
-import com.example.demo.entity.PODOrderDetail;
 import lombok.Data;
 
 import java.util.List;

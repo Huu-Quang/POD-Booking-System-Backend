@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Orders;
-import com.example.demo.model.OrderRequest;
+import com.example.demo.model.Request.OrderRequest;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.service.AuthenticationService;
 import com.example.demo.service.OrderService;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -29,10 +28,9 @@ public class OrderAPI {
     @Autowired
     AuthenticationService authenticationService;
     @PostMapping
-    public ResponseEntity create(@RequestBody OrderRequest orderRequest) {
-          Orders orders = orderService.create(orderRequest);
-        return ResponseEntity.ok(orders);
-
+    public ResponseEntity create(@RequestBody OrderRequest orderRequest) throws Exception {
+        String vnPayURL  = orderService.createUrl(orderRequest);
+        return ResponseEntity.ok(vnPayURL);
     }
     @GetMapping
     public ResponseEntity getAll(){
@@ -42,21 +40,22 @@ public class OrderAPI {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity get(@PathVariable UUID id){
+    public ResponseEntity get(@PathVariable Long id){
         Orders orders = orderRepository.findOrdersById(id);
         return ResponseEntity.ok(orders);
     }
     @PutMapping("{id}")
-    public ResponseEntity update(@PathVariable UUID id, @RequestBody OrderRequest orderRequest) {
+    public ResponseEntity update(@PathVariable Long id, @RequestBody OrderRequest orderRequest) {
         Orders orders = orderService.update(id, orderRequest);
         return ResponseEntity.ok(orders);
     }
     @DeleteMapping("{id}")
-    public void delete(@PathVariable UUID id){
+    public void delete(@PathVariable Long id){
         orderService.delete(id);
     }
+
     @PostMapping("/transaction")
-    public ResponseEntity createTransaction(@RequestParam UUID orderId) {
+    public ResponseEntity createTransaction(@RequestParam Long orderId) {
         orderService.createTransaction(orderId);
         return ResponseEntity.ok("success");
     }

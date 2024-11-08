@@ -2,16 +2,14 @@ package com.example.demo.service;
 
 
 import com.example.demo.entity.Account;
+import com.example.demo.entity.Enum.Role;
 import com.example.demo.exception.DuplicateEntity;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.model.AccountResponse;
-import com.example.demo.model.EmailDetail;
-import com.example.demo.model.LoginRequest;
-import com.example.demo.model.RegisterRequest;
+import com.example.demo.model.Request.*;
+import com.example.demo.model.Response.AccountResponse;
 import com.example.demo.repository.AccountRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,10 +19,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.demo.model.ResetPassword;
 
 
-import java.security.DigestException;
 import java.util.List;
 
 @Service
@@ -75,22 +71,24 @@ public class AuthenticationService implements UserDetailsService {
 
     }
     public AccountResponse login(LoginRequest loginRequest) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-
-                    loginRequest.getUsername(),
-                    loginRequest.getPassword()
-            ));
-            // => account is already exist
-            Account account = (Account) authentication.getPrincipal();
-            AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
-            accountResponse.setToken(tokenService.generateToken(account));
-            return accountResponse;
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new EntityNotFoundException("Username or password invalid");
+        Account account = accountRepository.findAccountByUsername(loginRequest.getUsername());
+        if (account == null || !passwordEncoder.matches(loginRequest.getPassword(), account.getPassword())) {
+            throw new EntityNotFoundException("Username or password invalid!");
         }
 
+        // Check if the account has the BANNED role
+        if (account.getRole() == Role.BANNED) {
+            throw new EntityNotFoundException("Account is banned and cannot log in!");
+        }
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
+        accountResponse.setToken(tokenService.generateToken(account));
+        return accountResponse;
     }
     public List<Account> getAllAccount() {
         List<Account> accounts = accountRepository.findAll();
@@ -138,10 +136,25 @@ public class AuthenticationService implements UserDetailsService {
 
         return account;
     }
+    public AccountResponse updateAccount(Long id, UpdateAccountRequest updateAccountRequest) {
+        Account account = accountRepository.findAccountById(id);
+        if(account == null) {
+            throw new EntityNotFoundException("Account not found");
+        }
+        account.setUsername(updateAccountRequest.getUsername());
+        account.setPhone(updateAccountRequest.getPhone());
+        account.setEmail(updateAccountRequest.getEmail());
 
-    public Account login(){
-        return null;
+
+        account.setPassword(updateAccountRequest.getPassword());
+        account.setRole(updateAccountRequest.getRole());
+        accountRepository.save(account);
+        return modelMapper.map(account, AccountResponse.class);
     }
+
+
+
+
 
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.entity.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,21 +14,20 @@ import java.util.UUID;
 @Setter
 public class POD {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
     String image;
     String description;
     String price;
-    String location;
+
+
 
 
     @OneToMany(mappedBy = "pod")
             @JsonIgnore
     List<Account> accounts;
 
-    @OneToMany(mappedBy = "pod")
-    @JsonIgnore
-    List<PODOrderDetail> orderPlanDetails;
+
 
     @OneToMany(mappedBy = "pod")
             @JsonIgnore
@@ -37,6 +37,13 @@ public class POD {
     @JoinColumn(name = "account_id")
     @JsonIgnore
     Account account;
+
+    @ManyToOne
+    @JoinColumn(name = "coffeeshop_id")
+    @JsonIgnore
+    CoffeeShop coffeeShop;
+
+
 
 
 

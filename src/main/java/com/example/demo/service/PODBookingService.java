@@ -1,23 +1,16 @@
 package com.example.demo.service;
 
-import com.example.demo.config.SecurityConfig;
 import com.example.demo.entity.PODBooking;
 import com.example.demo.entity.PODSlot;
-import com.example.demo.model.PODBookingResponse;
 import com.example.demo.repository.PODBookingRepository;
 import com.example.demo.repository.PODSlotRepository;
-
-import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springfox.documentation.spi.service.contexts.SecurityContext;
 
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -29,96 +22,94 @@ public class PODBookingService {
     @Autowired
     AuthenticationService authenticationService;
 
-    public PODBooking createBooking(LocalDateTime start, LocalDateTime end) {
-        timeConstraints(start,end);
+    public String createBooking(LocalDateTime start, LocalDateTime end) {
+        LocalDateTime now = LocalDateTime.now();
+
+        // Check if start time is equal to end time
+        if (start.isEqual(end)) {
+            return "Bạn không được book trùng giờ";
+        }
+
+        // Check if start time is after end time
+        if (start.isAfter(end)) {
+            return "Startime phải nhỏ hơn Endtime";
+        }
+
+        // Check if the booking time is within the allowed range
+        if (start.toLocalTime().isBefore(LocalTime.of(7, 0)) || end.toLocalTime().isAfter(LocalTime.of(22, 0))) {
+            return "Quán đã đóng cửa";
+        }
+
+        // Check if the booking date is valid (from tomorrow and within one week)
+        if (start.toLocalDate().isBefore(now.toLocalDate().plusDays(1)) || start.toLocalDate().isAfter(now.toLocalDate().plusWeeks(1))) {
+            return "Ngày book không hợp lệ";
+        }
+
+        // Check if the slot already exists
+        boolean slotOverlaps = podSlotRepository.existsByTimeRangeOverlap(start, end);
+        if (slotOverlaps) {
+            return "Slot đã tồn tại";
+        }
+
+        // Create and save the booking
         PODSlot slot = new PODSlot();
         slot.setStartTime(start);
         slot.setEndTime(end);
         slot.setPrice((end.getHour() - start.getHour()) * 100000);
 
-        PODBooking booking;
-
-        booking = new PODBooking();
+        PODBooking booking = new PODBooking();
         booking.setAccount(authenticationService.getCurrentAccount());
-
         slot.setBook(booking);
-
         booking.setSlots(List.of(slot));
 
-        return this.podBookingRepository.save(booking);
+        float totalPrice = booking.getSlots().stream().map(PODSlot::getPrice).reduce(0.0f, Float::sum);
 
-
-    }
-    public PODSlot createNewSlot(LocalDateTime start, LocalDateTime end, Long bookId) {
-        timeConstraints(start,end);
-        PODBooking booking = this.podBookingRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-        if(booking.isIsPaid()){
-            return null;
-        }
-        PODSlot slot = new PODSlot();
-        slot.setStartTime(start);
-        slot.setEndTime(end);
-        slot.setPrice((float) ((Duration.between(start, end).toMinutes())/60.0 * 100000));
-        slot.setBook(booking);
-
-        return this.podSlotRepository.save(slot);
-    }
-    private void timeConstraints(LocalDateTime start, LocalDateTime end){
-        if (start.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("The start time must from now.");
-        }
-        if(!end.toLocalDate().equals(start.toLocalDate())){
-            throw new IllegalArgumentException("The end time must be in the same day as start time.");
-        }
-        boolean slotOverlaps = podSlotRepository.existsByTimeRangeOverlap(start, end);
-        if (slotOverlaps) {
-            throw new IllegalArgumentException("A slot with an overlapping time range already exists.");
-        }
-    }
-
-    public PODBookingResponse checkOut(Long id){
-        PODBookingResponse response = new PODBookingResponse();
-        PODBooking booking = this.podBookingRepository.findById(id).orElseThrow();
-        response.setBookID(id);
-        List<PODSlot> eSlots = booking.getSlots();
-        for (PODSlot podSlot : eSlots) {
-           if(podSlotRepository.existsByTimeRangeOverlap(podSlot.getStartTime(),podSlot.getEndTime())){
-                eSlots.remove(podSlot);
-           } 
-        }
-        List<PODSlot> slots = eSlots.stream()
-        .map(slot -> {PODSlot detached = new PODSlot(slot.getId(),slot.getStartTime(),slot.getEndTime(),null);
-            return detached;
-        })
-        .collect(Collectors.toList());
-
-        response.setSlots(slots);
-        float totalPrice = (float) booking.getSlots().stream().mapToDouble(PODSlot::getPrice).sum();
-        response.setTotalPrice(totalPrice);
         booking.setTotalPrice(totalPrice);
-        return response;
+
+        podBookingRepository.save(booking);
+
+        return "Booking created successfully";
     }
 
-    public PODBookingResponse pay(Long id){
-        PODBookingResponse response = new PODBookingResponse();
-        PODBooking booking = this.podBookingRepository.findById(id).orElseThrow();
-    
-        response.setBookID(id);
-        List<PODSlot> eSlots = booking.getSlots();
-        List<PODSlot> slots = eSlots.stream()
-        .map(slot -> {PODSlot detached = new PODSlot(slot.getId(),slot.getStartTime(),slot.getEndTime(),null);
-            return detached;
-        })
-        .collect(Collectors.toList());
 
-        response.setSlots(slots);
-        float totalPrice = (float) booking.getSlots().stream().mapToDouble(PODSlot::getPrice).sum();
-        response.setTotalPrice(totalPrice);
-        if(booking.isIsPaid()){
-            return response;
-        }
-        booking.setTotalPrice(totalPrice);
-        booking.setIsPaid(true);
-        return response;
+    public List<PODBooking> getAllBookingsByAccount(Long accountId) {
+        return podBookingRepository.findByAccountId(accountId);
+    }
+
+    public float calculateTotalPrice(Long accountId) {
+        List<PODBooking> bookings = podBookingRepository.findByAccountId(accountId);
+        return bookings.stream().map(PODBooking::getTotalPrice).reduce(0.0f, Float::sum);
+    }
+
+    public float calculateTotalAmountSpent(Long accountId) {
+        List<PODBooking> bookings = podBookingRepository.findByAccountId(accountId);
+        return bookings.stream()
+                .flatMap(booking -> booking.getSlots().stream())
+                .map(PODSlot::getPrice)
+                .reduce(0.0f, Float::sum);
+    }
+
+    public String updateBooking(Long id, LocalDateTime start, LocalDateTime end) {
+        PODBooking booking = podBookingRepository.findById(id).orElseThrow(() -> new RuntimeException("Booking not found"));
+        // Update booking details
+        booking.getSlots().forEach(slot -> {
+            slot.setStartTime(start);
+            slot.setEndTime(end);
+            slot.setPrice((end.getHour() - start.getHour()) * 100000);
+        });
+        podBookingRepository.save(booking);
+        return "Booking updated successfully";
+    }
+
+    public void deleteBooking(Long id) {
+        PODBooking booking = podBookingRepository.findById(id).orElseThrow(() -> new RuntimeException("Booking not found"));
+        podSlotRepository.deleteAll(booking.getSlots());
+        podBookingRepository.deleteById(id);
+    }
+
+    public float getBookingId(Long bookingId) {
+        PODBooking booking = podBookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        return booking.getTotalPrice();
     }
 }

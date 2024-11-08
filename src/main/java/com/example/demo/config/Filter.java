@@ -41,9 +41,8 @@ public class Filter extends OncePerRequestFilter {
             "/swagger-resources/**",
             "/api/account/login",
             "/api/account/register",
-            "/api/account/forgot-password",
-            "/api/product",
-            "/api/product/all"
+            "/api/account/forgot-password"
+
 
     );
 
@@ -55,6 +54,7 @@ public class Filter extends OncePerRequestFilter {
 
         return AUTH_PERMISSION.stream().anyMatch(pattern -> patchMatch.match(pattern, uri));
     }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // ktra truoc khi cho phep truy cap vao controller

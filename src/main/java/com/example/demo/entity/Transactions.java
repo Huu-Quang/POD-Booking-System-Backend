@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.example.demo.entity.Enum.TransactionsEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,8 +13,8 @@ import java.util.UUID;
 @Setter
 public class Transactions {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     @ManyToOne
     @JoinColumn(name = "from_id")
@@ -25,6 +26,7 @@ public class Transactions {
 
     @ManyToOne
     @JoinColumn(name = "payment_id")
+            @JsonIgnore
     Payment payment;
 
     TransactionsEnum status;

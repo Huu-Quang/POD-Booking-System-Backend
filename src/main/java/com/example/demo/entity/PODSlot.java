@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import net.bytebuddy.dynamic.TypeResolutionStrategy.Lazy;
 
@@ -19,6 +20,7 @@ public class PODSlot {
 
     // Many slots can belong to one Book
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "book_id")
     private PODBooking book;
     @Column(nullable = false)

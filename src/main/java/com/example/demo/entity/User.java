@@ -19,22 +19,18 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     long id;
 
-    @JsonIgnore
-    boolean isDeleted = false;
 
 
-    @NotBlank(message = "Name can not be blank!")
-    String name;
+
+    String username;
 
 
-    @Min(value = 0, message = "Age can not be less than 0!")
-    int age;
 
 
     @Pattern(regexp = "(84|0[3|5|7|8|9])+(\\d{8})\\b", message = "Phone number is invalid")
@@ -43,6 +39,10 @@ public class User {
 
     @Email(message = "Invalid email")
     String email;
+
+    String password;
+
+
 
     @ManyToOne
     @JoinColumn(name = "account_id")

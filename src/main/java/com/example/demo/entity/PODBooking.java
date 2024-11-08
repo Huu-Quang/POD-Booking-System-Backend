@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,9 +14,11 @@ public class PODBooking {
 
     // Mapping uid to Account entity
     @ManyToOne
+    @JsonIgnore
     private Account account;
 
     @OneToMany(mappedBy = "book",  cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<PODSlot> slots;
 
     private float totalPrice;

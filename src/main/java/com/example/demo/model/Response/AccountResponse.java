@@ -1,6 +1,6 @@
-package com.example.demo.model;
+package com.example.demo.model.Response;
 
-import jakarta.validation.constraints.NotBlank;
+import com.example.demo.entity.Enum.Role;
 import lombok.Data;
 
 @Data
@@ -12,4 +12,5 @@ public class AccountResponse {
     String Email;
     String Phone;
     String Token;
+    Role role;
 }

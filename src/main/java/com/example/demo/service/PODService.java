@@ -19,7 +19,7 @@ public class PODService {
         return podRepository.findAll();
     }
 
-    public POD getPODById(UUID id) {
+    public POD getPODById(Long id) {
         return podRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("POD not found"));
     }
 
@@ -27,16 +27,15 @@ public class PODService {
         return podRepository.save(pod);
     }
 
-    public POD updatePOD(UUID id, POD podDetails) {
+    public POD updatePOD(Long id, POD podDetails) {
         POD pod = podRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("POD not found"));
-        pod.setLocation(podDetails.getLocation());
         pod.setImage(podDetails.getImage());
         pod.setDescription(podDetails.getDescription());
         pod.setPrice(podDetails.getPrice());
         return podRepository.save(pod);
     }
 
-    public void deletePOD(UUID id) {
+    public void deletePOD(Long id) {
         POD pod = podRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("POD not found"));
         podRepository.delete(pod);
     }
