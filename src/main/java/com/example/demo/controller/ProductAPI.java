@@ -75,8 +75,8 @@ public class ProductAPI {
     }
     @PutMapping("{id}")
 
-    public ResponseEntity update(@PathVariable Long id, @RequestPart("file") MultipartFile file, @RequestBody Product product) throws Exception {
-        Product updateProduct = productService.update(id, file, product);
+    public ResponseEntity update(@PathVariable Long id, @RequestBody Product product) throws Exception {
+        Product updateProduct = productService.update(id, product);
         return ResponseEntity.ok(updateProduct);
     }
 

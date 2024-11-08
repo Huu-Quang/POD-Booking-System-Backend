@@ -50,8 +50,8 @@ import java.util.UUID;
 
         @PutMapping("/{id}")
 
-        public ResponseEntity<POD> updatePOD(@PathVariable Long id, @RequestPart("file") MultipartFile file, @RequestBody POD podDetails) throws Exception {
-            POD updatedPOD = podService.updatePOD(id, file, podDetails);
+        public ResponseEntity<POD> updatePOD(@PathVariable Long id, @RequestBody POD podDetails) throws Exception {
+            POD updatedPOD = podService.updatePOD(id, podDetails);
             return ResponseEntity.ok(updatedPOD);
         }
 

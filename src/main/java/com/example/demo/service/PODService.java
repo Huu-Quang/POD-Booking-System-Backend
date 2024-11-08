@@ -30,7 +30,7 @@ public class PODService {
         return podRepository.save(pod);
     }
 
-    public POD updatePOD(Long id, MultipartFile file, POD podDetails) throws IOException {
+    public POD updatePOD(Long id, POD podDetails) throws IOException {
         POD pod = podRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("POD not found"));
         pod.setImage(podDetails.getImage());
         pod.setDescription(podDetails.getDescription());

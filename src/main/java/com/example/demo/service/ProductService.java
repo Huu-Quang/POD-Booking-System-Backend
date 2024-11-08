@@ -32,7 +32,7 @@ public class ProductService {
         return productRepository.findProductById(id);
     }
 
-    public Product update(Long id, MultipartFile file, Product product) throws IOException {
+    public Product update(Long id, Product product) throws IOException {
 
         Product updateProduct = productRepository.findProductById(id);
         updateProduct.setName(product.getName());

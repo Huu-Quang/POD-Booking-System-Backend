@@ -15,8 +15,8 @@ public class CoffeeShopService {
 
     @Autowired
     CoffeeShopRepository coffeeShopRepository;
-//    @Autowired
-//    FirebaseStorageService firebaseStorageService;
+@Autowired
+ImgurService imgurService;
 
     public List<CoffeeShop> findCoffeeShopsByAddress(String address) {
         return coffeeShopRepository.findByAddress(address);
@@ -34,7 +34,7 @@ public class CoffeeShopService {
         return coffeeShopRepository.save(coffeeShop);
     }
 
-    public CoffeeShop updateCoffeeShop(Long id, MultipartFile file, CoffeeShop coffeeShop) throws IOException {
+    public CoffeeShop updateCoffeeShop(Long id, CoffeeShop coffeeShop) throws IOException {
         CoffeeShop existingCoffeeShop = coffeeShopRepository.findById(id).orElse(null);
         if (existingCoffeeShop != null) {
             existingCoffeeShop.setName(coffeeShop.getName());
@@ -43,7 +43,7 @@ public class CoffeeShopService {
             existingCoffeeShop.setOpenTime(coffeeShop.getOpenTime());
             existingCoffeeShop.setCloseTime(coffeeShop.getCloseTime());
 //            if (file != null && !file.isEmpty()) {
-//                String url = firebaseStorageService.uploadFile(file);
+//                String url = imgurService.uploadImage(file);
 //                existingCoffeeShop.setImage(url);
 //            }
 

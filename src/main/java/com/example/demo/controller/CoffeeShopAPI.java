@@ -66,8 +66,8 @@ public class CoffeeShopAPI {
 //    }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<CoffeeShop> updateCoffeeShop(@PathVariable Long id, @RequestPart("file") MultipartFile file, @RequestBody CoffeeShop coffeeShop) throws Exception {
-        CoffeeShop updatedCoffeeShop = coffeeShopService.updateCoffeeShop(id, file, coffeeShop);
+    public ResponseEntity<CoffeeShop> updateCoffeeShop(@PathVariable Long id, @RequestBody CoffeeShop coffeeShop) throws Exception {
+        CoffeeShop updatedCoffeeShop = coffeeShopService.updateCoffeeShop(id, coffeeShop);
         return ResponseEntity.ok(updatedCoffeeShop);
     }
     @Autowired
