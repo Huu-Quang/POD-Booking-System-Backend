@@ -1,6 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Account;
 import com.example.demo.entity.CoffeeShop;
+import com.example.demo.model.Request.CoffeeShopRequest;
+import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.CoffeeShopRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,10 @@ public class CoffeeShopService {
 
     @Autowired
     CoffeeShopRepository coffeeShopRepository;
-@Autowired
-ImgurService imgurService;
+    @Autowired
+    ImgurService imgurService;
+    @Autowired
+    AccountRepository accountRepository;
 
     public List<CoffeeShop> findCoffeeShopsByAddress(String address) {
         return coffeeShopRepository.findByAddress(address);
@@ -30,7 +35,19 @@ ImgurService imgurService;
         return coffeeShopRepository.findAll();
     }
 
-    public CoffeeShop createCoffeeShop(CoffeeShop coffeeShop) {
+    public CoffeeShop createCoffeeShop(CoffeeShopRequest coffeeShopRequest) {
+        Account account = accountRepository.findById(coffeeShopRequest.getAccountId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid account ID"));
+
+        CoffeeShop coffeeShop = new CoffeeShop();
+        coffeeShop.setName(coffeeShopRequest.getName());
+        coffeeShop.setAddress(coffeeShopRequest.getAddress());
+        coffeeShop.setPhone(coffeeShopRequest.getPhone());
+        coffeeShop.setImage(coffeeShopRequest.getImage());
+        coffeeShop.setOpenTime(coffeeShopRequest.getOpenTime());
+        coffeeShop.setCloseTime(coffeeShopRequest.getCloseTime());
+        coffeeShop.setAccount(account); // Set the Account
+
         return coffeeShopRepository.save(coffeeShop);
     }
 

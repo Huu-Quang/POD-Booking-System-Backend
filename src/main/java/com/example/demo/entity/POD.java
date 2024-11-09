@@ -20,18 +20,9 @@ public class POD {
     String description;
     String price;
 
-
-
-
     @OneToMany(mappedBy = "pod")
             @JsonIgnore
     List<Account> accounts;
-
-
-
-    @OneToMany(mappedBy = "pod")
-            @JsonIgnore
-    List<Payment> payments;
 
     @ManyToOne
     @JoinColumn(name = "account_id")

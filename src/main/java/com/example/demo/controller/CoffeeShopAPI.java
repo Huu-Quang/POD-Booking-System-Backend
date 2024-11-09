@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.CoffeeShop;
 import com.example.demo.entity.Product;
+import com.example.demo.model.Request.CoffeeShopRequest;
 import com.example.demo.service.CoffeeShopService;
 //import com.example.demo.service.FirebaseStorageService;
 //import com.example.demo.service.FirebaseTokenService;
@@ -52,9 +53,8 @@ public class CoffeeShopAPI {
 
 
     @PostMapping("/create")
-
-    public ResponseEntity<CoffeeShop> createCoffeeShop(@RequestBody CoffeeShop coffeeShop) {
-        CoffeeShop createdCoffeeShop = coffeeShopService.createCoffeeShop(coffeeShop);
+    public ResponseEntity<CoffeeShop> createCoffeeShop(@RequestBody CoffeeShopRequest coffeeShopRequest) {
+        CoffeeShop createdCoffeeShop = coffeeShopService.createCoffeeShop(coffeeShopRequest);
         return ResponseEntity.ok(createdCoffeeShop);
     }
 

@@ -33,8 +33,5 @@ public class Payment {
             @JsonIgnore
     Set<Transactions> transactions;
 
-    @ManyToOne
-    @JoinColumn(name = "pod_id")
-            @JsonIgnore
-    POD pod;
+
 }
