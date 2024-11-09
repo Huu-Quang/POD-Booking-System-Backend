@@ -28,6 +28,10 @@ public class Orders {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     List<OrderDetail> orderDetail;
 
+    @ManyToMany(mappedBy = "orders")
+    @JsonIgnore
+    List<Product> products;
+
     @OneToOne(mappedBy = "orders")
     @JsonIgnore
     Payment payment;

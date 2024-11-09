@@ -54,5 +54,11 @@ public class FeedbackService {
     public List<Feedback> findFeedbacksByRating(int rating) {
         return feedbackRepository.findAllByRating(rating);
     }
+    public List<Feedback> findFeedbacksByUserId(Long userId) {
+        return feedbackRepository.findAllByUserId(userId);
+    }
+    public List<Feedback> findFeedbacksByCoffeeShopId(Long coffeeShopId) {
+        return feedbackRepository.findAllByCoffeeShopId(coffeeShopId);
+    }
 
 }

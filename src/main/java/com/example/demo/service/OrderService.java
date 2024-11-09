@@ -7,10 +7,7 @@ import com.example.demo.entity.Enum.TransactionsEnum;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.model.Request.OrderDetailRequest;
 import com.example.demo.model.Request.OrderRequest;
-import com.example.demo.repository.AccountRepository;
-import com.example.demo.repository.OrderRepository;
-import com.example.demo.repository.PaymentRepository;
-import com.example.demo.repository.ProductRepository;
+import com.example.demo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +39,8 @@ public class OrderService {
     @Autowired
     PaymentRepository paymentRepository;
 
-
+    @Autowired
+    CoffeeShopRepository  coffeeShopRepository;
 
     public Orders create(OrderRequest orderRequest) {
 
@@ -58,13 +56,13 @@ public class OrderService {
         for (OrderDetailRequest orderDetailRequest : orderRequest.getDetail()) {
 
             Product product = productRepository.findProductById(orderDetailRequest.getProductId());
-
+            CoffeeShop coffeeShop = coffeeShopRepository.findCoffeeShopById(orderDetailRequest.getShopId());
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setQuantity(orderDetailRequest.getQuantity());
             orderDetail.setPrice(Float.parseFloat(product.getPrice()));
             orderDetail.setProduct(product);
             orderDetail.setOrder(order);
-
+            orderDetail.setShop(coffeeShop);
 
             orderDetails.add(orderDetail);
 
@@ -224,7 +222,7 @@ public class OrderService {
         transactions2.setPayment(payment);
         transactions2.setStatus(TransactionsEnum.SUCCESS);
         transactions2.setDescription("User to Admin");
-        float newBalance = admin.getBalance() + order.getTotal() * 0.10f;
+        float newBalance = admin.getBalance() + order.getTotal();
         admin.setBalance(newBalance);
 
 

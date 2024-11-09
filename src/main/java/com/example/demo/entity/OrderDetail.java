@@ -29,5 +29,7 @@ public class OrderDetail {
     @JoinColumn(name = "product_id")
     Product product;
 
-
+    @ManyToOne
+    @JoinColumn(name = "shop_id")
+    CoffeeShop shop;
 }

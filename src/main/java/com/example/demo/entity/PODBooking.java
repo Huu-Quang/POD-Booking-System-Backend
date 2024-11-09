@@ -21,6 +21,10 @@ public class PODBooking {
     @JsonIgnore
     private List<PODSlot> slots;
 
+    @ManyToMany(mappedBy = "bookings")
+    @JsonIgnore
+    private List<POD> pods;
+
     private float totalPrice;
 
     private boolean isPaid;
@@ -29,7 +33,13 @@ public class PODBooking {
     public Long getId() {
         return id;
     }
+    public List<POD> getPods() {
+        return pods;
+    }
 
+    public void setPods(List<POD> pods) {
+        this.pods = pods;
+    }
     public float getTotalPrice() {
         return totalPrice;
     }

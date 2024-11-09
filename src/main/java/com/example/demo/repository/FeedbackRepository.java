@@ -8,4 +8,5 @@ import java.util.List;
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     List<Feedback> findAllByUserId(Long UserId);
     List<Feedback> findAllByRating(int rating);
+    List<Feedback> findAllByCoffeeShopId(Long coffeeShopId);
 }

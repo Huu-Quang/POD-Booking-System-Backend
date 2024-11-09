@@ -26,11 +26,11 @@ public class PODBookingAPI {
     PODBookingRepository podBookingRepository;
 
     @PostMapping("/add")
-    public ResponseEntity<String> createBooking(@RequestBody PODBookingRequest bookingRequest) {
+    public ResponseEntity<PODBooking> createBooking(@RequestBody PODBookingRequest bookingRequest) {
         LocalDateTime start = LocalDateTime.parse(bookingRequest.getStart(), DateTimeFormatter.ISO_DATE_TIME);
         LocalDateTime end = LocalDateTime.parse(bookingRequest.getEnd(), DateTimeFormatter.ISO_DATE_TIME);
-        String result = podBookingService.createBooking(start, end);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        PODBooking booking = podBookingService.createBooking(start, end);
+        return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 
     @GetMapping("/checkout/{id}")

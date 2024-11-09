@@ -44,7 +44,14 @@ public class POD {
     CoffeeShop coffeeShop;
 
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "pod_booking",
+            joinColumns = @JoinColumn(name = "pod_id"),
+            inverseJoinColumns = @JoinColumn(name = "booking_id")
+    )
+    @JsonIgnore
+    List<PODBooking> bookings;
 
 
 

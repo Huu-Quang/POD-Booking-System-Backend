@@ -28,7 +28,7 @@ public class Transactions {
     @JoinColumn(name = "payment_id")
             @JsonIgnore
     Payment payment;
-
+    @Enumerated(EnumType.STRING)
     TransactionsEnum status;
 
     String description;

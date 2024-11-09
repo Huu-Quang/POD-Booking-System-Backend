@@ -48,4 +48,16 @@ public class FeedbackAPI {
         return ResponseEntity.ok(feedbacks);
     }
 
+    @GetMapping("/searchByUserId")
+    public ResponseEntity<List<Feedback>> searchFeedbacksByUserId(@RequestParam Long userId) {
+        List<Feedback> feedbacks = feedbackService.findFeedbacksByUserId(userId);
+        return ResponseEntity.ok(feedbacks);
+    }
+
+    @GetMapping("/searchByCoffeeShopId")
+    public ResponseEntity<List<Feedback>> searchFeedbacksByCoffeeShopId(@RequestParam Long coffeeShopId) {
+        List<Feedback> feedbacks = feedbackService.findFeedbacksByCoffeeShopId(coffeeShopId);
+        return ResponseEntity.ok(feedbacks);
+    }
+
 }

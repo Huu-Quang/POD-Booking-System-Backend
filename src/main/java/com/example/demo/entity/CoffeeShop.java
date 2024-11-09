@@ -52,5 +52,7 @@ public class CoffeeShop {
     @JsonIgnore
     Account account;
 
-
+    @OneToMany(mappedBy = "shop")
+    @JsonIgnore
+    List<OrderDetail> orderDetails;
 }

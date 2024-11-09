@@ -43,5 +43,12 @@ public class Product {
     @JsonIgnore
     Account account;
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "product_orders",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "order_id")
+    )
+    @JsonIgnore
+    List<Orders> orders;
 }

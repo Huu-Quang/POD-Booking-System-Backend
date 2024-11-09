@@ -22,33 +22,37 @@ public class PODBookingService {
     @Autowired
     AuthenticationService authenticationService;
 
-    public String createBooking(LocalDateTime start, LocalDateTime end) {
+    public PODBooking createBooking(LocalDateTime start, LocalDateTime end) {
         LocalDateTime now = LocalDateTime.now();
 
         // Check if start time is equal to end time
         if (start.isEqual(end)) {
-            return "Bạn không được book trùng giờ";
+            throw new IllegalArgumentException("Bạn không được book trùng giờ");
         }
 
         // Check if start time is after end time
         if (start.isAfter(end)) {
-            return "Startime phải nhỏ hơn Endtime";
+            throw new IllegalArgumentException("Startime phải nhỏ hơn Endtime");
         }
 
         // Check if the booking time is within the allowed range
         if (start.toLocalTime().isBefore(LocalTime.of(7, 0)) || end.toLocalTime().isAfter(LocalTime.of(22, 0))) {
-            return "Quán đã đóng cửa";
+            throw new IllegalArgumentException("Cửa Hàng đã đóng cửa");
         }
 
         // Check if the booking date is valid (from tomorrow and within one week)
         if (start.toLocalDate().isBefore(now.toLocalDate().plusDays(1)) || start.toLocalDate().isAfter(now.toLocalDate().plusWeeks(1))) {
-            return "Ngày book không hợp lệ";
+            throw new IllegalArgumentException("Ngày book không hợp lệ");
+        }
+        // Check if the booking dates are the same
+        if (!start.toLocalDate().isEqual(end.toLocalDate())) {
+            throw new IllegalArgumentException("Ngày book không hợp lệ");
         }
 
         // Check if the slot already exists
         boolean slotOverlaps = podSlotRepository.existsByTimeRangeOverlap(start, end);
         if (slotOverlaps) {
-            return "Slot đã tồn tại";
+            throw new IllegalArgumentException("Slot đã được book");
         }
 
         // Create and save the booking
@@ -67,8 +71,7 @@ public class PODBookingService {
         booking.setTotalPrice(totalPrice);
 
         podBookingRepository.save(booking);
-
-        return "Booking created successfully";
+        return booking;
     }
 
 
