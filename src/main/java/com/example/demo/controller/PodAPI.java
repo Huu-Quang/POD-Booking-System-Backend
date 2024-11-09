@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.POD;
 //import com.example.demo.service.FirebaseStorageService;
+import com.example.demo.model.Request.PODRequest;
 import com.example.demo.service.ImgurService;
 import com.example.demo.service.PODService;
 import io.jsonwebtoken.io.IOException;
@@ -43,15 +44,13 @@ import java.util.UUID;
         }
 
         @PostMapping
-
-        public POD createPOD(@RequestBody POD pod) {
-            return podService.createPOD(pod);
+        public POD createPOD(@RequestBody PODRequest podRequest) {
+            return podService.createPOD(podRequest);
         }
 
         @PutMapping("/{id}")
-
-        public ResponseEntity<POD> updatePOD(@PathVariable Long id, @RequestBody POD podDetails) throws Exception {
-            POD updatedPOD = podService.updatePOD(id, podDetails);
+        public ResponseEntity<POD> updatePOD(@PathVariable Long id, @RequestBody PODRequest podRequest) {
+            POD updatedPOD = podService.updatePOD(id, podRequest);
             return ResponseEntity.ok(updatedPOD);
         }
 
@@ -86,5 +85,12 @@ import java.util.UUID;
             podService.deletePOD(id);
             return ResponseEntity.noContent().build();
         }
+
+        @GetMapping("/searchByShopId")
+        public ResponseEntity<List<POD>> searchPODsByShopId(@RequestParam Long shopId) {
+            List<POD> pods = podService.findPODsByShopId(shopId);
+            return ResponseEntity.ok(pods);
+        }
+
     }
 

@@ -20,9 +20,18 @@ public class POD {
     String description;
     String price;
 
+
+
+
     @OneToMany(mappedBy = "pod")
-            @JsonIgnore
+    @JsonIgnore
     List<Account> accounts;
+
+
+
+    @OneToMany(mappedBy = "pod")
+    @JsonIgnore
+    List<Payment> payments;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
@@ -43,6 +52,19 @@ public class POD {
     )
     @JsonIgnore
     List<PODBooking> bookings;
+
+    @OneToMany(mappedBy = "pod", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<PODBooking> podBookings;
+
+    public Long getAccountId() {
+        return account != null ? account.getId() : null;
+    }
+
+
+
+
+
 
 
 

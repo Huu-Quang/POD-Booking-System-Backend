@@ -29,7 +29,7 @@ public class PODBookingAPI {
     public ResponseEntity<PODBooking> createBooking(@RequestBody PODBookingRequest bookingRequest) {
         LocalDateTime start = LocalDateTime.parse(bookingRequest.getStart(), DateTimeFormatter.ISO_DATE_TIME);
         LocalDateTime end = LocalDateTime.parse(bookingRequest.getEnd(), DateTimeFormatter.ISO_DATE_TIME);
-        PODBooking booking = podBookingService.createBooking(start, end);
+        PODBooking booking = podBookingService.createBooking(bookingRequest);
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 

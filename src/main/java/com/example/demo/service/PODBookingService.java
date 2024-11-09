@@ -1,8 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.POD;
 import com.example.demo.entity.PODBooking;
 import com.example.demo.entity.PODSlot;
+import com.example.demo.model.Request.PODBookingRequest;
 import com.example.demo.repository.PODBookingRepository;
+import com.example.demo.repository.PODRepository;
 import com.example.demo.repository.PODSlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +24,11 @@ public class PODBookingService {
     PODSlotRepository podSlotRepository;
     @Autowired
     AuthenticationService authenticationService;
-
-    public PODBooking createBooking(LocalDateTime start, LocalDateTime end) {
+    @Autowired
+    PODRepository podRepository;
+    public PODBooking createBooking(PODBookingRequest request) {
+        LocalDateTime start = LocalDateTime.parse(request.getStart());
+        LocalDateTime end = LocalDateTime.parse(request.getEnd());
         LocalDateTime now = LocalDateTime.now();
 
         // Check if start time is equal to end time
@@ -55,6 +61,10 @@ public class PODBookingService {
             throw new IllegalArgumentException("Slot đã được book");
         }
 
+        // Retrieve the POD entity
+        POD pod = podRepository.findById(request.getPodId())
+                .orElseThrow(() -> new IllegalArgumentException("POD not found"));
+
         // Create and save the booking
         PODSlot slot = new PODSlot();
         slot.setStartTime(start);
@@ -63,12 +73,15 @@ public class PODBookingService {
 
         PODBooking booking = new PODBooking();
         booking.setAccount(authenticationService.getCurrentAccount());
+        booking.setPod(pod);
         slot.setBook(booking);
         booking.setSlots(List.of(slot));
 
         float totalPrice = booking.getSlots().stream().map(PODSlot::getPrice).reduce(0.0f, Float::sum);
 
         booking.setTotalPrice(totalPrice);
+        booking.setStartTime(start);
+        booking.setEndTime(end);
 
         podBookingRepository.save(booking);
         return booking;

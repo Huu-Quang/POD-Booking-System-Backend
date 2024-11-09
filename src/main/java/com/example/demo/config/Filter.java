@@ -45,13 +45,7 @@ public class Filter extends OncePerRequestFilter {
             "/api/product",
             "/api/product/{id}",
             "/api/product/upload",
-            "api/coffeeshops",
-            "api/coffeeshops/searchByName",
-            "api/coffeeshops/searchByAddress",
-            "api/coffeeshops/create",
-            "api/coffeeshops/{id}",
-            "api/coffeeshops/upload",
-            "api/coffeeshops/update/{id}",
+            "api/coffeeshops/**",
             "/api/orders/payment-callback/**"
 
     );

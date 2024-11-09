@@ -28,7 +28,10 @@ public class Payment {
     Orders orders;
 
 
-
+    @ManyToOne
+    @JoinColumn(name = "pod_id")
+            @JsonIgnore
+    POD pod;
     @OneToMany(mappedBy = "payment",cascade = CascadeType.ALL)
             @JsonIgnore
     Set<Transactions> transactions;
